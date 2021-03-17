@@ -3217,6 +3217,8 @@ NK_API nk_size nk_prog(struct nk_context*, nk_size cur, nk_size max, nk_bool mod
  * ============================================================================= */
 NK_API struct nk_colorf nk_color_picker(struct nk_context*, struct nk_colorf, enum nk_color_format);
 NK_API nk_bool nk_color_pick(struct nk_context*, struct nk_colorf*, enum nk_color_format);
+NK_API struct nk_color nk_col_picker(struct nk_context*, struct nk_color, enum nk_color_format);
+NK_API nk_bool nk_col_pick(struct nk_context*, struct nk_color*, enum nk_color_format);
 /* =============================================================================
  *
  *                                  PROPERTIES
@@ -28206,6 +28208,24 @@ nk_color_picker(struct nk_context *ctx, struct nk_colorf color,
     nk_color_pick(ctx, &color, fmt);
     return color;
 }
+NK_API struct nk_color
+nk_col_picker(struct nk_context *ctx, struct nk_color color,
+    enum nk_color_format fmt)
+{
+    struct nk_colorf cf = nk_color_cf(color);
+    cf = nk_color_picker(ctx, cf, fmt);
+    return nk_rgba_cf(cf);
+}
+NK_API nk_bool
+nk_col_pick(struct nk_context *ctx, struct nk_color *color,
+    enum nk_color_format fmt)
+{
+    nk_bool ret;
+    struct nk_colorf cf = nk_color_cf(*color);
+    ret = nk_color_pick(ctx, &cf, fmt);
+    *color = nk_rgba_cf(cf);
+    return ret;
+}
 
 
 
@@ -29173,6 +29193,7 @@ nk_tooltipfv(struct nk_context *ctx, const char *fmt, va_list args)
 ///    - [yy]: Minor version with non-breaking API and library changes
 ///    - [zz]: Bug fix version with no direct changes to API
 ///
+/// - 2021/03/19 (4.07.1) - Add nk_col_picker and nk_col_pick
 /// - 2021/03/17 (4.07.0) - Fix nk_property hover bug
 /// - 2021/03/15 (4.06.4) - Change nk_propertyi back to int
 /// - 2021/03/15 (4.06.3) - Update documentation for functions that now return nk_bool
